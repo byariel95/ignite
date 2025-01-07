@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, FlatList,Alert } from "react-native";
 import { styles } from './styles'
 import { Participant } from "../../components/Participant";
 export function Home() {
@@ -9,14 +9,34 @@ export function Home() {
         'Carla Anleu',
         'Jorge Orozco',
         'Adrian Smith',
-        'Maria Fernanda',]
+        'Maria Fernanda',
+        'Juan Perez',
+        'Ana Maria',
+        'Luisa Maria',
+        'Pedro Perez',
+        'Maria Perez',
+        'Juan Estuardo',
+        "Ana Luisa",
+        "Carlos Perez",
+    ]
 
     function handleParticipantAdd() {
-        console.log('Adicionar nuevo ')
+        if(participats.includes('Juan Perez')){
+           return Alert.alert('Participante existente', 'El participante ya fue agregado')
+        }
     }
 
-    function handleParticipantRemove() {
-        console.log('Eliminar nuevo ')
+    function handleParticipantRemove(participant: string) {
+        Alert.alert('Remove', `Estas seguro de eliminar el participante: ${participant}?`, [
+            {
+                text: 'Si',
+                onPress: () => Alert.alert('Eliminado')
+            },
+            {
+                text: 'No',
+                style: 'cancel'
+            }
+        ])
     }
 
     return (
@@ -39,11 +59,32 @@ export function Home() {
                     <Text style={styles.buttonText}>+</Text>
                 </TouchableOpacity>
             </View>
-
-            <Participant name='Ariel Monterroso' onRemove={handleParticipantRemove}/>
-            <Participant name='Carlos González' onRemove={handleParticipantRemove}/>
-
-
+            {/* <ScrollView showsVerticalScrollIndicator={false}>
+                {
+                    participats.map((participant, index) => (
+                        <Participant
+                            key={index}
+                            name={participant}
+                            onRemove={() => handleParticipantRemove(participant)}
+                        />
+                    ))
+                }
+            </ScrollView> */}
+            <FlatList
+                data={participats}
+                showsVerticalScrollIndicator={false}
+                ListEmptyComponent={() => (
+                    <Text style={styles.listEmptyText}>No hay participantes agregados</Text>
+                )}
+                keyExtractor={item => item}
+                renderItem={({ item }) => (
+                    <Participant
+                        key={item}
+                        name={item}
+                        onRemove={() => handleParticipantRemove(item)}
+                    />
+                )}
+            />
         </View>
     );
 }

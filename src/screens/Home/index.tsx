@@ -1,36 +1,27 @@
-import { View, Text, TextInput, TouchableOpacity, FlatList,Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, FlatList, Alert } from "react-native";
 import { styles } from './styles'
 import { Participant } from "../../components/Participant";
+import { useState } from "react";
+import "dayjs/locale/es-mx"
+import dayjs from "dayjs";
 export function Home() {
+    const [participants, setParticipant] = useState<string[]>([])
+    const [participantName, setParticipantName] = useState('')
 
-    const participats = [
-        'Ariel Monterroso',
-        'Carlos González',
-        'Carla Anleu',
-        'Jorge Orozco',
-        'Adrian Smith',
-        'Maria Fernanda',
-        'Juan Perez',
-        'Ana Maria',
-        'Luisa Maria',
-        'Pedro Perez',
-        'Maria Perez',
-        'Juan Estuardo',
-        "Ana Luisa",
-        "Carlos Perez",
-    ]
 
     function handleParticipantAdd() {
-        if(participats.includes('Juan Perez')){
-           return Alert.alert('Participante existente', 'El participante ya fue agregado')
+        if (participants.includes(participantName)) {
+            return Alert.alert('Participante existente', 'El participante ya fue agregado')
         }
+        setParticipant(prevState => [...prevState, participantName])
+        setParticipantName('')
     }
 
-    function handleParticipantRemove(participant: string) {
-        Alert.alert('Remove', `Estas seguro de eliminar el participante: ${participant}?`, [
+    function handleParticipantRemove(name: string) {
+        Alert.alert('Remove', `Estas seguro de eliminar el participante: ${name}?`, [
             {
                 text: 'Si',
-                onPress: () => Alert.alert('Eliminado')
+                onPress: () => setParticipant(prevState => prevState.filter(participant => participant !== name))
             },
             {
                 text: 'No',
@@ -39,19 +30,26 @@ export function Home() {
         ])
     }
 
+    function getCurrentDate() {
+        const date = dayjs()
+        const locale = dayjs(date).locale('es-mx').format('dddd D  MMMM YYYY')
+        return locale
+    }
     return (
         <View style={styles.container}>
             <Text style={styles.eventName}>
                 Nombre del Evento
             </Text>
             <Text style={styles.eventDate}>
-                Calle 24, 19 de Noviembre de 2024
+                Nuevo Leon, {getCurrentDate()}
             </Text>
             <View style={styles.form}>
                 <TextInput
                     style={styles.input}
                     placeholder="Nombre del participante"
                     placeholderTextColor={'#6B6B6B'}
+                    onChangeText={setParticipantName}
+                    value={participantName}
                 />
                 <TouchableOpacity style={styles.button}
                     onPress={handleParticipantAdd}
@@ -71,7 +69,7 @@ export function Home() {
                 }
             </ScrollView> */}
             <FlatList
-                data={participats}
+                data={participants}
                 showsVerticalScrollIndicator={false}
                 ListEmptyComponent={() => (
                     <Text style={styles.listEmptyText}>No hay participantes agregados</Text>
